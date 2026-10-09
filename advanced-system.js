@@ -59,23 +59,14 @@
   $('body-structure').querySelector('.lab').insertAdjacentHTML('beforeend','<div class="layer-readout" id="advs-layer-note" aria-live="polite">도해의 DRAM 다이를 클릭하거나 키보드로 선택해 보세요. 각 층은 데이터를 저장하고 수직 TSV 경로로 연결됩니다.</div>');
   function chooseLayer(el){document.querySelectorAll('.layer-select.chosen').forEach(n=>n.classList.remove('chosen'));el.classList.add('chosen');$('advs-layer-note').textContent=`DRAM 다이 ${el.dataset.layer} 선택 · 다이마다 셀 어레이가 있으며 스택을 관통하는 수직 연결은 각 다이의 I/O를 베이스 쪽 연결로 이어 줍니다. 다이 번호는 이 그림의 아래쪽부터 세는 표시입니다.`}
   document.addEventListener('click',e=>{const el=e.target.closest('.layer-select');if(el)chooseLayer(el)});document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.layer-select')){e.preventDefault();chooseLayer(e.target)}});
-  const hero=$('hero-stack');let heroExplode=true,heroAngle=-7;
-  hero.parentElement.insertAdjacentHTML('beforeend','<div class="hero-controls"><button id="advs-hero-explode" aria-pressed="true">적층 펼침 ✓</button><button id="advs-hero-turn">시점 바꾸기 ↻</button><a href="#dataflow">데이터 경로 보기 →</a></div>');
-  $('advs-hero-explode').onclick=()=>{heroExplode=!heroExplode;hero.innerHTML=api.stack(8,heroExplode?20:9,heroAngle);$('advs-hero-explode').setAttribute('aria-pressed',String(heroExplode));$('advs-hero-explode').textContent=heroExplode?'적층 펼침 ✓':'적층 접힘 · 펼치기'};
-  $('advs-hero-turn').onclick=()=>{heroAngle=heroAngle===-7?20:-7;hero.innerHTML=api.stack(8,heroExplode?20:9,heroAngle)};
-  const basicHeroHandlers=[$('advs-hero-explode').onclick,$('advs-hero-turn').onclick];
+  const hero=$('hero-stack');
+  hero.parentElement.insertAdjacentHTML('beforeend','<div class="hero-controls"><button id="advs-hero-explode" aria-pressed="true" disabled>적층 펼침 ✓</button><button id="advs-hero-turn" disabled>스택 확대 ↗</button><a href="#dataflow">데이터 경로 보기 →</a></div>');
   hero.addEventListener('hbm-hero-fallback',()=>{
-   hero.innerHTML=api.stack(8,heroExplode?20:9,heroAngle);hero.dataset.heroMode='svg';hero.setAttribute('aria-busy','false');
-   $('advs-hero-explode').onclick=basicHeroHandlers[0];$('advs-hero-turn').onclick=basicHeroHandlers[1];
-   $('advs-hero-explode').disabled=false;$('advs-hero-turn').disabled=false;$('advs-hero-turn').textContent='시점 바꾸기 ↻';
-   $('advs-hero-explode').setAttribute('aria-pressed',String(heroExplode));$('advs-hero-explode').textContent=heroExplode?'적층 펼침 ✓':'적층 접힘 · 펼치기';
-   hero.parentElement.querySelector('.pkg-hero-fallback')?.remove();
-   hero.insertAdjacentHTML('afterend','<p class="pkg-hero-fallback" role="status">현재 환경에서 3D를 사용할 수 없어 기본 도해를 표시합니다.</p>');
-  });
-  if(hero.dataset.heroMode==='loading'){
+   hero.dataset.heroMode='unavailable';hero.setAttribute('aria-busy','false');
+   hero.innerHTML='<div class="pkg-hero-placeholder" role="status"><span>3D 모형을 불러올 수 없습니다.<br><a href="">페이지 다시 불러오기 ↻</a></span></div>';
    $('advs-hero-explode').disabled=true;$('advs-hero-turn').disabled=true;
-   setTimeout(()=>{if(hero.dataset.heroMode==='loading')hero.dispatchEvent(new Event('hbm-hero-fallback'))},15000);
-  }
+  });
+  setTimeout(()=>{if(hero.dataset.heroMode==='loading'){const message=hero.querySelector('.pkg-hero-loading-text');if(message)message.textContent='3D 모형을 불러오는 중입니다. 잠시만 기다려 주세요.'}},15000);
  }
  });
  window.HBMExtraQuestions=[

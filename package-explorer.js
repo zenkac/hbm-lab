@@ -1,4 +1,4 @@
-import {PARTS,GENERATIONS,SOURCES} from './package-content.js?v=20261009-hero';
+import {PARTS,GENERATIONS,SOURCES} from './package-content.js?v=20261010-loader';
 
 const modelState={layers:8,generation:'hbm3e',bonding:'microbump',explode:35,tsv:true,flow:true,labels:true,autoRotate:false,view:'package',selected:null};
 const oldLab=document.querySelector('#body-structure .lab');
@@ -68,7 +68,7 @@ function mountHero(createPackageScene){
 drawControls();
 async function start(){
   try{
-    const {createPackageScene}=await import('./package-scene.js?v=20261009-hero');
+    const {createPackageScene}=await import('./package-scene.js?v=20261010-loader');
     mountHero(createPackageScene);
     scene=createPackageScene(at('pkg-stage'),(part,meta)=>{
       if(meta?.type==='hover'){at('pkg-hover').textContent=PARTS[part]?PARTS[part].title+' · 클릭하면 설명':'드래그 회전 · 휠 / 두 손가락 확대';return}
