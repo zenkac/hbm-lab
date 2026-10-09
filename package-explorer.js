@@ -8,6 +8,7 @@ const explorer=document.createElement('div');
 explorer.className='pkg-explorer';explorer.id='package-explorer';explorer.dataset.visualMode='loading';
 explorer.innerHTML=`<div class="pkg-heading"><div><small>EXPERIMENT 01 <span class="pkg-badge">3D EXPLORER</span></small><h3>2.5D HBM 패키지 · 안쪽까지 살펴보기</h3></div><button type="button" id="pkg-basic" class="pkg-text-button" hidden>기본 도해 보기</button></div><div class="pkg-body"><div class="pkg-display"><div class="pkg-stage" id="pkg-stage" aria-label="드래그와 확대가 가능한 3D HBM 패키지"><div class="pkg-loading">패키지 모델을 준비하고 있습니다…</div></div><div class="pkg-canvas-tools"><span id="pkg-hover">드래그 회전 · 휠 / 두 손가락 확대</span><button type="button" id="pkg-reset">시점 초기화 ↺</button></div><div class="pkg-parts" aria-label="부품 선택">${Object.entries(PARTS).map(([key,part])=>`<button type="button" data-pkg-part="${key}" aria-pressed="false">${part.title}</button>`).join('')}</div><div class="pkg-detail" id="pkg-detail"><span class="pkg-detail-kicker">EXPLORE THE PACKAGE</span><h4>그림 속 부품을 직접 선택해 보세요.</h4><p>라벨 또는 아래 부품 버튼을 누르면 연결 역할을 확인할 수 있습니다. 드래그하면 다른 면을, ‘스택 확대’에서는 다이 사이를 볼 수 있습니다.</p></div></div><div class="pkg-panel">${group('layers','DRAM 적층 수',[[4,'4-Hi'],[8,'8-Hi'],[12,'12-Hi'],[16,'16-Hi']])}${group('generation','인터페이스 비교',[['hbm3e','HBM3E'],['hbm4','HBM4']])}${group('bonding','다이 사이 접합 비교',[['microbump','마이크로범프'],['hybrid','하이브리드']])}<label class="pkg-slider"><span>분해도 <output id="pkg-explode-value">35%</output></span><input id="pkg-explode" type="range" min="0" max="100" value="35" step="1" aria-label="패키지 분해도"></label>${group('view','관찰 범위',[['package','패키지 전체'],['stack','스택 확대']])}<div class="pkg-toggles">${toggle('tsv','TSV 표시')}${toggle('flow','데이터 흐름')}${toggle('labels','부품 라벨')}${toggle('autoRotate','자동 회전')}</div><div class="pkg-current"><span>현재 모델 조건</span><p id="pkg-assumptions"></p></div></div></div><div class="pkg-metrics" aria-label="교육용 모델 계산"><div><span>스택 용량 · 24 Gb / 다이 가정</span><strong id="pkg-capacity"></strong></div><div><span>스택당 이론 대역폭</span><strong id="pkg-bandwidth"></strong><small id="pkg-interface"></small></div><div><span>패키지 4스택 · 총 용량</span><strong id="pkg-total-capacity"></strong></div><div><span>패키지 4스택 · 총 이론 대역폭</span><strong id="pkg-total-bandwidth"></strong></div></div><p class="pkg-footnote">치수·층 간격·연결 수·배선은 관찰하기 위한 개념 표현입니다. 접합 방식은 독립적인 구조 비교이며 선택한 세대의 실제 제품 공정을 뜻하지 않습니다. 분해도는 실제 다이 두께를 바꾸지 않습니다.</p><p id="pkg-status" class="pkg-status" role="status" aria-live="polite">3D 모델 준비 중</p>`;
 oldLab.before(explorer);
+explorer.querySelectorAll('.pkg-body button,.pkg-body input').forEach(control=>control.disabled=true);
 const sourceLinks=document.createElement('p');sourceLinks.className='pkg-source-links';sourceLinks.innerHTML='구조와 비교값의 근거 · '+SOURCES.map(source=>`<a href="${source.url}" target="_blank" rel="noopener noreferrer">${source.title} ↗</a>`).join(' · ');explorer.appendChild(sourceLinks);
 let scene,heroScene,heroState,failed=false,basic=false;
 const at=id=>document.getElementById(id);
@@ -29,6 +30,7 @@ function drawControls(){
   const gen=GENERATIONS[modelState.generation],capacity=modelState.layers*3,bandwidth=gen.width*gen.speed/8/1000;
   explorer.querySelectorAll('[data-pkg-setting]').forEach(button=>button.setAttribute('aria-pressed',String(String(modelState[button.dataset.pkgSetting])===button.dataset.value)));
   at('pkg-explode-value').textContent=modelState.explode+'%';
+  at('pkg-explode').value=String(modelState.explode);
   at('pkg-capacity').textContent=capacity+' GB';at('pkg-bandwidth').textContent=number(bandwidth,3)+' TB/s';
   at('pkg-interface').textContent=gen.width+' bit × '+gen.speed+' Gbit/s ÷ 8';
   at('pkg-total-capacity').textContent=capacity*4+' GB';at('pkg-total-bandwidth').textContent=number(bandwidth*4,3)+' TB/s';
@@ -62,6 +64,7 @@ async function start(){
     at('pkg-explode').oninput=event=>{modelState.explode=Number(event.target.value);drawControls()};
     at('pkg-reset').onclick=()=>{scene.reset();modelState.autoRotate=false;explorer.querySelector('[data-pkg-toggle="autoRotate"]').checked=false;drawControls();at('pkg-status').textContent='관찰 시점을 초기화했습니다.'};
     at('pkg-basic').onclick=()=>useBasic();
+    explorer.querySelectorAll('.pkg-body button,.pkg-body input').forEach(control=>control.disabled=false);
     at('pkg-stage').querySelector('canvas')?.addEventListener('webglcontextlost',()=>useBasic(true));
     const hero=at('hero-stack');
     const previousHero=[...hero.childNodes];
