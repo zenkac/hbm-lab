@@ -1,4 +1,4 @@
-import {PARTS,GENERATIONS,SOURCES} from './package-content.js?v=20261009-3d';
+import {PARTS,GENERATIONS,SOURCES} from './package-content.js?v=20261009-hero';
 
 const modelState={layers:8,generation:'hbm3e',bonding:'microbump',explode:35,tsv:true,flow:true,labels:true,autoRotate:false,view:'package',selected:null};
 const oldLab=document.querySelector('#body-structure .lab');
@@ -48,10 +48,28 @@ function useBasic(forceFailure=false){
   if(failed){scene?.dispose();scene=null}
 }
 
+function mountHero(createPackageScene){
+  const hero=at('hero-stack');
+  const restoreHero=()=>{heroScene?.dispose();heroScene=null;hero.dispatchEvent(new Event('hbm-hero-fallback'))};
+  try{
+    const heroHost=document.createElement('div');heroHost.className='pkg-stage pkg-hero-stage';heroHost.setAttribute('aria-label','회전과 확대가 가능한 HBM 패키지 미리보기');
+    hero.replaceChildren(heroHost);
+    heroScene=createPackageScene(heroHost,(part,meta)=>{if(meta?.type!=='hover'&&PARTS[part]){describe(part);location.hash='structure'}});
+    heroState={...modelState,explode:25,labels:false,flow:false,autoRotate:false,view:'package',selected:null};heroScene.update(heroState);heroScene.renderInitialFrame();
+    heroHost.querySelector('canvas').addEventListener('webglcontextlost',restoreHero,{once:true});
+    at('advs-hero-explode').onclick=()=>{heroState.explode=heroState.explode?0:40;heroScene.update(heroState);at('advs-hero-explode').textContent=heroState.explode?'적층 펼침 ✓':'적층 펼치기';at('advs-hero-explode').setAttribute('aria-pressed',String(heroState.explode>0))};
+    at('advs-hero-turn').textContent='스택 확대 ↗';at('advs-hero-turn').onclick=()=>{heroState.view=heroState.view==='package'?'stack':'package';heroScene.update(heroState);at('advs-hero-turn').textContent=heroState.view==='package'?'스택 확대 ↗':'전체 보기 ↗'};
+    at('advs-hero-explode').disabled=false;at('advs-hero-turn').disabled=false;
+    hero.parentElement.querySelector('.pkg-hero-fallback')?.remove();
+    hero.dataset.heroMode='webgl';hero.setAttribute('aria-busy','false');
+  }catch(error){console.warn('HBM 소개 모델을 기본 도해로 전환합니다.',error.message);restoreHero()}
+}
+
 drawControls();
 async function start(){
   try{
-    const {createPackageScene}=await import('./package-scene.js?v=20261009-3d');
+    const {createPackageScene}=await import('./package-scene.js?v=20261009-hero');
+    mountHero(createPackageScene);
     scene=createPackageScene(at('pkg-stage'),(part,meta)=>{
       if(meta?.type==='hover'){at('pkg-hover').textContent=PARTS[part]?PARTS[part].title+' · 클릭하면 설명':'드래그 회전 · 휠 / 두 손가락 확대';return}
       describe(part);
@@ -66,20 +84,7 @@ async function start(){
     at('pkg-basic').onclick=()=>useBasic();
     explorer.querySelectorAll('.pkg-body button,.pkg-body input').forEach(control=>control.disabled=false);
     at('pkg-stage').querySelector('canvas')?.addEventListener('webglcontextlost',()=>useBasic(true));
-    const hero=at('hero-stack');
-    const previousHero=[...hero.childNodes];
-    const heroButtons=['advs-hero-explode','advs-hero-turn'].map(id=>({node:at(id),onclick:at(id).onclick,text:at(id).textContent,pressed:at(id).getAttribute('aria-pressed')}));
-    const restoreHero=()=>{heroScene?.dispose();heroScene=null;hero.replaceChildren(...previousHero);for(const saved of heroButtons){saved.node.onclick=saved.onclick;saved.node.textContent=saved.text;if(saved.pressed===null)saved.node.removeAttribute('aria-pressed');else saved.node.setAttribute('aria-pressed',saved.pressed)}};
-    try{
-      const heroHost=document.createElement('div');heroHost.className='pkg-stage pkg-hero-stage';heroHost.setAttribute('aria-label','회전과 확대가 가능한 HBM 패키지 미리보기');
-      hero.replaceChildren(heroHost);
-      heroScene=createPackageScene(heroHost,(part,meta)=>{if(meta?.type!=='hover'&&PARTS[part]){describe(part);location.hash='structure'}});
-      heroState={...modelState,explode:25,labels:false,flow:false,autoRotate:false,view:'package',selected:null};heroScene.update(heroState);
-      heroHost.querySelector('canvas').addEventListener('webglcontextlost',restoreHero,{once:true});
-      at('advs-hero-explode').onclick=()=>{heroState.explode=heroState.explode?0:40;heroScene.update(heroState);at('advs-hero-explode').textContent=heroState.explode?'적층 펼침 ✓':'적층 펼치기';at('advs-hero-explode').setAttribute('aria-pressed',String(heroState.explode>0))};
-      at('advs-hero-turn').textContent='스택 확대 ↗';at('advs-hero-turn').onclick=()=>{heroState.view=heroState.view==='package'?'stack':'package';heroScene.update(heroState);at('advs-hero-turn').textContent=heroState.view==='package'?'스택 확대 ↗':'전체 보기 ↗'};
-    }catch{restoreHero()}
-  }catch(error){console.warn('HBM 3D 모델을 기본 도해로 전환합니다.',error.message);useBasic(true)}
+  }catch(error){console.warn('HBM 3D 모델을 기본 도해로 전환합니다.',error.message);useBasic(true);if(at('hero-stack').dataset.heroMode==='loading')at('hero-stack').dispatchEvent(new Event('hbm-hero-fallback'))}
 }
 start();
 

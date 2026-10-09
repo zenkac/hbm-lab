@@ -506,6 +506,13 @@ export function createPackageScene(host, onSelect = () => {}) {
     flyTo({ target, position: target.clone().add(offset) });
   }
   function setView(view) { update({ view }); }
+  function renderInitialFrame() {
+    if (disposed || renderedFrames || contextLost) return;
+    resize(); explodeCurrent = state.explode / 100; layout(explodeCurrent);
+    flyTo(cameraPose(state.view), true); moveFlow(0);
+    renderer.render(scene, camera); renderedFrames++; positionLabels();
+    host.dataset.pkgFirstFrame = 'ready';
+  }
   function reset() { if (disposed) return; viewTween = null; flyTo(cameraPose(state.view)); }
   function getStatus() {
     const suspendedReason = disposed ? 'disposed' : contextLost ? 'context-lost' : document.hidden ? 'hidden-tab' : !visible ? 'offscreen' : null;
@@ -534,5 +541,5 @@ export function createPackageScene(host, onSelect = () => {}) {
   host.dataset.pkgContext = 'ready';
   const initial = host.getBoundingClientRect(); visible = initial.width > 0 && initial.height > 0 && initial.bottom > 0 && initial.top < window.innerHeight;
   invalidate();
-  return { update, focus, setView, reset, dispose, getStatus };
+  return { update, focus, setView, reset, dispose, getStatus, renderInitialFrame };
 }

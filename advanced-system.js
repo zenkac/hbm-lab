@@ -63,6 +63,19 @@
   hero.parentElement.insertAdjacentHTML('beforeend','<div class="hero-controls"><button id="advs-hero-explode" aria-pressed="true">적층 펼침 ✓</button><button id="advs-hero-turn">시점 바꾸기 ↻</button><a href="#dataflow">데이터 경로 보기 →</a></div>');
   $('advs-hero-explode').onclick=()=>{heroExplode=!heroExplode;hero.innerHTML=api.stack(8,heroExplode?20:9,heroAngle);$('advs-hero-explode').setAttribute('aria-pressed',String(heroExplode));$('advs-hero-explode').textContent=heroExplode?'적층 펼침 ✓':'적층 접힘 · 펼치기'};
   $('advs-hero-turn').onclick=()=>{heroAngle=heroAngle===-7?20:-7;hero.innerHTML=api.stack(8,heroExplode?20:9,heroAngle)};
+  const basicHeroHandlers=[$('advs-hero-explode').onclick,$('advs-hero-turn').onclick];
+  hero.addEventListener('hbm-hero-fallback',()=>{
+   hero.innerHTML=api.stack(8,heroExplode?20:9,heroAngle);hero.dataset.heroMode='svg';hero.setAttribute('aria-busy','false');
+   $('advs-hero-explode').onclick=basicHeroHandlers[0];$('advs-hero-turn').onclick=basicHeroHandlers[1];
+   $('advs-hero-explode').disabled=false;$('advs-hero-turn').disabled=false;$('advs-hero-turn').textContent='시점 바꾸기 ↻';
+   $('advs-hero-explode').setAttribute('aria-pressed',String(heroExplode));$('advs-hero-explode').textContent=heroExplode?'적층 펼침 ✓':'적층 접힘 · 펼치기';
+   hero.parentElement.querySelector('.pkg-hero-fallback')?.remove();
+   hero.insertAdjacentHTML('afterend','<p class="pkg-hero-fallback" role="status">현재 환경에서 3D를 사용할 수 없어 기본 도해를 표시합니다.</p>');
+  });
+  if(hero.dataset.heroMode==='loading'){
+   $('advs-hero-explode').disabled=true;$('advs-hero-turn').disabled=true;
+   setTimeout(()=>{if(hero.dataset.heroMode==='loading')hero.dispatchEvent(new Event('hbm-hero-fallback'))},15000);
+  }
  }
  });
  window.HBMExtraQuestions=[
