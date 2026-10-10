@@ -30,7 +30,7 @@
       const formula = text => `<div class="formula">${text}</div>`;
       const task = text => `<div class="task"><b>업무에서 확인하기</b> ${text}</div>`;
       const style = document.createElement('style');
-      style.textContent = `.advm-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.advm-buttons button{font-size:13px}.advm-buttons button[aria-pressed=true]{background:var(--green);color:var(--bg)}.advm-lesson{border:1px solid var(--line);border-radius:7px;padding:16px 20px;margin:14px 0}.advm-lesson summary{font-weight:700;cursor:pointer}.advm-lesson p,.advm-lesson li{font-size:14px;color:var(--muted)}.advm-source{color:var(--muted)}.advm-packets{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:14px}.advm-packets button{font-size:12px;padding:6px 2px;min-width:0}.advm-caption{font-size:12px;color:var(--muted);margin:10px 0}.advm-click{cursor:pointer}.advm-click:focus{outline:none}.advm-click:focus rect{stroke:var(--orange);stroke-width:3px}.advm-instructions{font-size:12px;line-height:1.7;color:var(--muted)}.advm-matrix-readout{padding:12px;background:var(--soft);border-radius:5px;font-size:13px;min-height:70px}.advm-viz-wrap{position:relative}.advm-lesson code{overflow-wrap:anywhere}.advm-source a{text-underline-offset:3px}`;
+      style.textContent = `.advm-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.advm-buttons button{font-size:13px}.advm-buttons button[aria-pressed=true]{background:linear-gradient(120deg,var(--lavender),var(--sky));color:var(--ink);border-color:var(--diagram-selected)}.advm-lesson{border:1px solid var(--line);border-radius:7px;padding:16px 20px;margin:14px 0}.advm-lesson summary{font-weight:700;cursor:pointer}.advm-lesson p,.advm-lesson li{font-size:14px;color:var(--muted)}.advm-source{color:var(--muted)}.advm-packets{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:14px}.advm-packets button{font-size:12px;padding:6px 2px;min-width:0}.advm-caption{font-size:12px;color:var(--muted);margin:10px 0}.advm-click{cursor:pointer}.advm-click:focus{outline:none}.advm-click:focus rect{stroke:var(--diagram-selected);stroke-width:3px}.advm-instructions{font-size:12px;line-height:1.7;color:var(--muted)}.advm-matrix-readout{padding:12px;background:var(--soft);border-radius:5px;font-size:13px;min-height:70px}.advm-viz-wrap{position:relative}.advm-lesson code{overflow-wrap:anywhere}.advm-source a{text-underline-offset:3px}`;
       document.head.appendChild(style);
 
       // An animation has no scheduled frame while hidden, outside the viewport,
@@ -105,9 +105,9 @@
         counts.forEach((count, pc) => {
           const x = 20 + pc % 8 * 72, y = 118 + Math.floor(pc / 8) * 51;
           const chosen = (selectedPC === null ? d.pc : selectedPC) === pc;
-          cells += `<g class="advm-click" role="button" tabindex="0" data-advm-pc="${pc}" aria-label="PC ${pc}, 요청 ${count}개, 선택하기"><rect x="${x}" y="${y}" width="64" height="43" rx="5" fill="${chosen ? '#ccf292' : '#58a38d'}" fill-opacity="${chosen ? 1 : .13 + .72 * count / Math.max(1, max)}" stroke="${chosen ? '#ba562c' : '#799e8c'}" stroke-width="${chosen ? 2 : 1}"/><text x="${x + 7}" y="${y + 17}" style="font-size:11px">PC ${pc}</text><text x="${x + 7}" y="${y + 34}" style="font-size:11px">${count} req</text></g>`;
+          cells += `<g class="advm-click" role="button" tabindex="0" data-advm-pc="${pc}" aria-label="PC ${pc}, 요청 ${count}개, 선택하기"><rect x="${x}" y="${y}" width="64" height="43" rx="5" fill="${chosen ? '#ccf292' : '#58a38d'}" fill-opacity="${chosen ? 1 : .13 + .72 * count / Math.max(1, max)}" stroke="${chosen ? '#08645b' : '#799e8c'}" stroke-width="${chosen ? 2 : 1}"/><text x="${x + 7}" y="${y + 17}" style="font-size:11px">PC ${pc}</text><text x="${x + 7}" y="${y + 34}" style="font-size:11px">${count} req</text></g>`;
         });
-        $('viz-12').innerHTML = diagram(`<text x="20" y="23">주소 → 채널 → 의사채널 → 뱅크/행</text><rect x="20" y="43" width="180" height="43" rx="6" fill="#ccf292"/><text x="31" y="62">#${current + 1} · 0x${address.toString(16).toUpperCase()}</text><text x="31" y="78" style="font-size:11px">${address} byte</text><path d="M205 65H282" stroke="#58a38d" stroke-width="3"/><circle cx="${211 + (t % 1) * 66}" cy="65" r="6" fill="#ba562c"/><rect x="290" y="43" width="286" height="43" rx="6" fill="#c4d4be"/><text x="302" y="64">CH ${Math.floor(d.pc / 2)} · PC ${d.pc}</text><text x="302" y="80" style="font-size:11px">가상 Bank ${d.bank} · Row ${d.row}</text>${cells}<text x="20" y="344" class="label">칸 색이 진할수록 요청이 많음 · 선택 칸은 연두색</text><text x="20" y="365" class="label">행·뱅크 값은 별도 가상 분해이며 실제 주소맵이 아닙니다.</text>`, '주소 요청과 32개 의사채널 분포');
+        $('viz-12').innerHTML = diagram(`<text x="20" y="23">주소 → 채널 → 의사채널 → 뱅크/행</text><rect x="20" y="43" width="180" height="43" rx="6" fill="#ccf292"/><text x="31" y="62">#${current + 1} · 0x${address.toString(16).toUpperCase()}</text><text x="31" y="78" style="font-size:11px">${address} byte</text><path d="M205 65H282" stroke="#58a38d" stroke-width="3"/><circle cx="${211 + (t % 1) * 66}" cy="65" r="6" fill="#ba562c"/><rect x="290" y="43" width="286" height="43" rx="6" fill="#c4d4be"/><text x="302" y="64">CH ${Math.floor(d.pc / 2)} · PC ${d.pc}</text><text x="302" y="80" style="font-size:11px">가상 Bank ${d.bank} · Row ${d.row}</text>${cells}<text x="20" y="344" class="label">민트 농도: 요청량 · 라벤더 칸과 굵은 테두리: 선택</text><text x="20" y="365" class="label">행·뱅크 값은 별도 가상 분해이며 실제 주소맵이 아닙니다.</text>`, '주소 요청과 32개 의사채널 분포');
         const focusPC = selectedPC === null ? d.pc : selectedPC;
         const examples = Array.from({ length: 64 }, (_, i) => i).filter(i => decode(addressAt(i)).pc === focusPC).slice(0, 5).map(i => `#${i + 1}(${addressAt(i)}B)`).join(', ');
         $(id('map-detail')).textContent = `PC ${focusPC}: ${counts[focusPC]}개 요청. ${examples ? '예: ' + examples : '현재 64개 요청에서 접근하지 않습니다.'}`;
@@ -161,7 +161,7 @@
         let blocks = '';
         for (let j = 0; j < actual / 32; j++) blocks += `<path d="M${35 + j * 32 * scale} 85v${height}" stroke="#487b69" stroke-width="1"/>`;
         const dataWidth = 530 * dataTime / elapsed;
-        $('viz-13').innerHTML = diagram(`<text x="35" y="32">물리 ${actual}B 중 필요한 ${useful}B</text><rect x="35" y="85" width="530" height="${height}" rx="3" fill="#c4d4be"/><rect x="${35 + before}" y="85" width="${usefulWidth}" height="${height}" fill="#08645b"/>${blocks}<text x="35" y="144" class="label">진한 초록: 유용한 payload · 옅은 영역: 함께 읽는 바이트</text><text x="35" y="192">요청 1개에 배분한 총 시간 ${num(elapsed, 2)} ns</text><rect x="35" y="214" width="530" height="37" rx="3" fill="#d8b081"/><rect x="35" y="214" width="${dataWidth}" height="37" fill="#58a38d"/><text x="35" y="278" class="label">전송 ${num(dataTime, 2)}ns + 배분한 유휴 ${num(gapTime, 2)}ns</text><text x="35" y="315" class="label">전체 효율 = payload 효율 × 시간 이용률</text><text x="35" y="346" class="label">요청 묶음은 가상 서비스 단위이며 DRAM BL 변경이 아닙니다.</text>`, '유용한 데이터와 32바이트 접근 및 유휴 시간');
+        $('viz-13').innerHTML = diagram(`<text x="35" y="32">물리 ${actual}B 중 필요한 ${useful}B</text><rect x="35" y="85" width="530" height="${height}" rx="3" fill="#c4d4be"/><rect x="${35 + before}" y="85" width="${usefulWidth}" height="${height}" fill="#08645b"/>${blocks}<text x="35" y="144" class="label">라벤더: 유용한 payload · 하늘색: 함께 읽는 바이트</text><text x="35" y="192">요청 1개에 배분한 총 시간 ${num(elapsed, 2)} ns</text><rect x="35" y="214" width="530" height="37" rx="3" fill="#d8b081"/><rect x="35" y="214" width="${dataWidth}" height="37" fill="#58a38d"/><text x="35" y="278" class="label">민트: 전송 ${num(dataTime, 2)}ns · 피치: 유휴 ${num(gapTime, 2)}ns</text><text x="35" y="315" class="label">전체 효율 = payload 효율 × 시간 이용률</text><text x="35" y="346" class="label">요청 묶음은 가상 서비스 단위이며 DRAM BL 변경이 아닙니다.</text>`, '유용한 데이터와 32바이트 접근 및 유휴 시간');
       }
       wire(['payload', 'offset', 'gap', 'pinrate', 'bundle'].map(id), updateBurst);
       function preset(values) { Object.keys(values).forEach(key => { $(id(key)).value = values[key]; $(id(key)).dispatchEvent(new Event('input')); }); }
@@ -241,14 +241,14 @@
         let timeline = '';
         for (let bank = 0; bank < 4; bank++) {
           const y = 76 + bank * 55, offset = stagger ? bank * period / 4 : 0;
-          timeline += `<text x="14" y="${y + 20}">Bank ${bank}</text><rect x="80" y="${y}" width="480" height="30" rx="3" fill="#c4d4be"/>`;
+          timeline += `<text x="14" y="${y + 20}">Bank ${bank}</text><rect x="80" y="${y}" width="480" height="30" rx="3" fill="#58a38d"/>`;
           for (let rep = -1; rep <= 2; rep++) {
             const start = offset + rep * period, left = Math.max(0, start), right = Math.min(period * 2, start + blocked);
             if (right > left) timeline += `<rect x="${80 + left * scale}" y="${y}" width="${(right - left) * scale}" height="30" fill="#ba562c"/>`;
           }
-          timeline += `<circle cx="574" cy="${y + 15}" r="7" fill="${available[bank] ? '#08645b' : '#ba562c'}"/>`;
+          timeline += `<circle cx="574" cy="${y + 15}" r="7" fill="${available[bank] ? '#58a38d' : '#ba562c'}"/>`;
         }
-        $('viz-14').innerHTML = diagram(`<text x="80" y="27">0</text><text x="306" y="27">${period}µs</text><text x="518" y="27">${period * 2}µs</text>${timeline}<path d="M${x} 47V288" stroke="#183c39" stroke-width="2"/><text x="80" y="327" class="label">초록 영역: 일반 접근 가능 · 주황 영역: 유지 동작 차단</text><text x="80" y="354" class="label">검은 커서: 현재 시각 · 오른쪽 점: 뱅크별 현재 상태</text>`, '4개 뱅크의 리프레시 차단 타임라인');
+        $('viz-14').innerHTML = diagram(`<text x="80" y="27">0</text><text x="306" y="27">${period}µs</text><text x="518" y="27">${period * 2}µs</text>${timeline}<path d="M${x} 47V288" stroke="#183c39" stroke-width="2"/><text x="80" y="327" class="label">민트: 일반 접근 가능 · 피치: 유지 동작 차단</text><text x="80" y="354" class="label">검은 커서: 현재 시각 · 오른쪽 점: 뱅크별 현재 상태</text>`, '4개 뱅크의 리프레시 차단 타임라인');
       }
       refreshPlayer = player($('viz-14'), drawRefresh, .1, 'refresh-play', 'refresh-step', .0012);
       wire(['interval', 'blocktime', 'refreshmode'].map(id), () => refreshPlayer.reset());
@@ -267,9 +267,9 @@
         let cells = '';
         charges.forEach((charge, cell) => {
           const x = 57 + cell % 8 * 62, y = 37 + Math.floor(cell / 8) * 37;
-          cells += `<g class="advm-click" role="button" tabindex="0" data-advm-cell="${cell}" aria-label="셀 ${cell}, 전하 ${num(charge, 2)}, 선택하기"><rect x="${x}" y="${y}" width="50" height="28" rx="4" fill="${charge < .5 ? '#ba562c' : '#58a38d'}" fill-opacity="${.25 + .75 * charge}" stroke="${cell === selectedCell ? '#ba562c' : '#799e8c'}" stroke-width="${cell === selectedCell ? 3 : 1}"/><text x="${x + 7}" y="${y + 18}" style="font-size:11px">${num(charge, 2)}</text></g>`;
+          cells += `<g class="advm-click" role="button" tabindex="0" data-advm-cell="${cell}" aria-label="셀 ${cell}, 전하 ${num(charge, 2)}, 선택하기"><rect x="${x}" y="${y}" width="50" height="28" rx="4" fill="${charge < .5 ? '#ba562c' : '#58a38d'}" fill-opacity="${.25 + .75 * charge}" stroke="${cell === selectedCell ? '#08645b' : '#799e8c'}" stroke-width="${cell === selectedCell ? 3 : 1}"/><text x="${x + 7}" y="${y + 18}" style="font-size:11px">${num(charge, 2)}</text></g>`;
         });
-        $('viz-17').innerHTML = diagram(`${cells}<text x="57" y="350" class="label">가상 Q: 1=복원 직후 · 0.5 미만은 주황색 · 선택 셀은 굵은 테두리</text>`, '64개 가상 DRAM 셀의 전하와 유지 시간 분포');
+        $('viz-17').innerHTML = diagram(`${cells}<text x="57" y="350" class="label">가상 Q: 1=복원 직후 · 0.5 미만은 피치색 · 선택 셀은 굵은 테두리</text>`, '64개 가상 DRAM 셀의 전하와 유지 시간 분포');
         $(id('retention-detail')).textContent = `선택 셀 #${selectedCell}: τ=${num(cellTau(selectedCell), 1)}ms · 복원 후 ${num(ages[selectedCell], 1)}ms · Q=${num(charges[selectedCell], 3)}. 이 셀의 가상 임계값 도달 시간 τ×ln2=${num(cellTau(selectedCell) * Math.LN2, 1)}ms.`;
       }
       retentionPlayer = player($('viz-17'), drawRetention, 2, 'retention-play', 'retention-step', .008);
