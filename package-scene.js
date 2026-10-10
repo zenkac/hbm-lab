@@ -14,10 +14,10 @@ export function createPackageScene(host, onSelect = () => {}) {
   let previousPackageFit = 1.2;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf4f7f8);
-  scene.fog = new THREE.Fog(0xf4f7f8, 38, 85);
+  scene.background = null;
+  scene.fog = new THREE.Fog(0xf3edfc, 38, 85);
   const camera = new THREE.PerspectiveCamera(42, 1, .1, 110);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   if (!renderer.getContext()) { renderer.dispose(); throw new Error('WebGL을 사용할 수 없습니다.'); }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -77,9 +77,9 @@ export function createPackageScene(host, onSelect = () => {}) {
   const fillLight = new THREE.DirectionalLight(0xd4edf6, 2.0); fillLight.position.set(-8, 8, -6); scene.add(fillLight);
   const rimLight = new THREE.DirectionalLight(0xffffff, 1.5); rimLight.position.set(1, 10, -12); scene.add(rimLight);
   const groundGeometry = new THREE.PlaneGeometry(100, 100);
-  const groundMaterial = new THREE.MeshStandardMaterial({ color: 0xf3f6f5, roughness: .97, metalness: 0 });
+  const groundMaterial = new THREE.ShadowMaterial({ color: 0x797aab, opacity: .18 });
   const ground = new THREE.Mesh(groundGeometry, groundMaterial); ground.rotation.x = -Math.PI / 2; ground.position.y = .03; ground.receiveShadow = true; scene.add(ground);
-  const grid = new THREE.GridHelper(26, 26, 0xd5e3dd, 0xe3ece7); grid.position.y = .038;
+  const grid = new THREE.GridHelper(26, 26, 0xc7c4e6, 0xdbe2f3); grid.position.y = .038;
   grid.material.transparent = true; grid.material.opacity = .27; scene.add(grid);
 
   // A procedural, softly lit studio environment supplies reflections to copper
@@ -150,17 +150,17 @@ export function createPackageScene(host, onSelect = () => {}) {
     const image = document.createElement('canvas'); image.width = 1024; image.height = 1024;
     const paint = image.getContext('2d');
     if (!paint) return null;
-    const gradient = paint.createLinearGradient(0, 0, 1024, 1024); gradient.addColorStop(0, '#184c51'); gradient.addColorStop(.5, '#0f343c'); gradient.addColorStop(1, '#193d4d');
+    const gradient = paint.createLinearGradient(0, 0, 1024, 1024); gradient.addColorStop(0, '#7561a5'); gradient.addColorStop(.5, '#4d567f'); gradient.addColorStop(1, '#617aaa');
     paint.fillStyle = gradient; paint.fillRect(0, 0, 1024, 1024);
     paint.strokeStyle = '#57968d'; paint.lineWidth = 2;
     for (let y = 70; y < 960; y += 94) for (let x = 60; x < 960; x += 95) {
       paint.strokeRect(x, y, 70, 70); paint.fillStyle = (x + y) % 3 ? '#164750' : '#245e61'; paint.fillRect(x + 8, y + 8, 54, 54);
       paint.fillStyle = '#51897c'; for (let j = 0; j < 4; j++) paint.fillRect(x + 12 + j * 14, y + 17, 5, 36);
     }
-    paint.fillStyle = '#143d45'; paint.fillRect(180, 385, 666, 248);
-    paint.strokeStyle = '#b2c5b1'; paint.lineWidth = 2; paint.strokeRect(190, 395, 646, 228);
-    paint.fillStyle = '#e9f3db'; paint.font = '700 104px sans-serif'; paint.textAlign = 'center'; paint.fillText('GPU', 512, 508);
-    paint.fillStyle = '#a8ccbf'; paint.font = '500 27px sans-serif'; paint.fillText('ACCELERATOR · COMPUTE DIE', 512, 566);
+    paint.fillStyle = '#4b4b75'; paint.fillRect(180, 385, 666, 248);
+    paint.strokeStyle = '#d1c1e7'; paint.lineWidth = 2; paint.strokeRect(190, 395, 646, 228);
+    paint.fillStyle = '#fff5ea'; paint.font = '700 104px sans-serif'; paint.textAlign = 'center'; paint.fillText('GPU', 512, 508);
+    paint.fillStyle = '#d0e5fa'; paint.font = '500 27px sans-serif'; paint.fillText('ACCELERATOR · COMPUTE DIE', 512, 566);
     const texture = new THREE.CanvasTexture(image); texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy()); modelTextures.add(texture); return texture;
   }
@@ -178,13 +178,13 @@ export function createPackageScene(host, onSelect = () => {}) {
     disposeModel(); sceneRevision++;
     const gen4 = state.generation === 'hbm4', hybrid = state.bonding === 'hybrid';
     dimensions = { stackW: gen4 ? 2.66 : 2.5, stackD: gen4 ? 2.06 : 1.96, dieH: .145, bondGap: hybrid ? .026 : .048, padN: hybrid ? 8 : 7, tsvN: 6 };
-    const pcbMaterial = material('substrate', { color: 0x2f665e, metalness: .22, roughness: .42, clearcoat: .18 });
+    const pcbMaterial = material('substrate', { color: 0x94c9be, metalness: .22, roughness: .42, clearcoat: .18 });
     substrate = makeBox(roundedBox(14, .61, 10.1, .09), pcbMaterial, 'substrate');
     substrate.position.set(0, .68, 0); edge(substrate.geometry, 'substrate', substrate, 0x466e5e, .55);
     const layerGeometry = ownGeometry(new THREE.BoxGeometry(13.9, .027, 10));
-    const pcbLayerMaterial = material('substrate', { color: 0xb4bd91, roughness: .55, metalness: .18 });
+    const pcbLayerMaterial = material('substrate', { color: 0xf0d7b4, roughness: .55, metalness: .18 });
     for (let y = -.17; y <= .18; y += .12) { const mesh = makeBox(layerGeometry, pcbLayerMaterial, 'substrate', substrate); mesh.position.y = y; }
-    const interposerMaterial = material('interposer', { color: 0xa8c4bd, roughness: .3, metalness: .42, clearcoat: .32 });
+    const interposerMaterial = material('interposer', { color: 0xbbd2ed, roughness: .3, metalness: .42, clearcoat: .32 });
     interposer = makeBox(roundedBox(12.9, .27, 8.75, .035), interposerMaterial, 'interposer');
     edge(interposer.geometry, 'interposer', interposer, 0x78a99b, .7);
 
@@ -198,10 +198,10 @@ export function createPackageScene(host, onSelect = () => {}) {
     c4.instanceMatrix.needsUpdate = true; c4.computeBoundingSphere();
 
     gpu = new THREE.Group(); model.add(gpu);
-    const gpuMaterial = material('gpu', { color: 0x1e3841, roughness: .19, metalness: .62, clearcoat: .42, clearcoatRoughness: .16 });
+    const gpuMaterial = material('gpu', { color: 0x62658e, roughness: .19, metalness: .62, clearcoat: .42, clearcoatRoughness: .16 });
     const gpuBody = makeBox(roundedBox(4.85, .48, 4.55, .065), gpuMaterial, 'gpu', gpu);
     edge(gpuBody.geometry, 'gpu', gpuBody, 0x527f83, .72);
-    const gpuFrameMaterial = material('gpu', { color: 0xb0bcac, roughness: .23, metalness: .88 });
+    const gpuFrameMaterial = material('gpu', { color: 0xd7cbe7, roughness: .23, metalness: .88 });
     const gpuFrame = makeBox(roundedBox(4.61, .045, 4.30, .012), gpuFrameMaterial, 'gpu', gpu); gpuFrame.position.y = .254;
     gpuTopTexture = drawChipTexture();
     const topMaterial = material('gpu', { color: 0xffffff, map: gpuTopTexture, roughness: .3, metalness: .26, clearcoat: .2 });
@@ -209,9 +209,9 @@ export function createPackageScene(host, onSelect = () => {}) {
 
     const baseGeometry = roundedBox(dimensions.stackW + .075, .23, dimensions.stackD + .075, .026);
     const dramGeometry = roundedBox(dimensions.stackW, dimensions.dieH, dimensions.stackD, .018);
-    const baseMaterial = material('base', { color: 0x274858, metalness: .47, roughness: .24, clearcoat: .35 });
-    const dramMaterial = material('dram', { color: gen4 ? 0x83a4cd : 0x82bdb7, metalness: .12, roughness: .27, clearcoat: .35, transparent: true, opacity: .56, depthWrite: false, side: THREE.FrontSide });
-    const dramCapMaterial = material('dram', { color: gen4 ? 0xafc4e2 : 0xb9d9d1, metalness: .25, roughness: .30, transparent: true, opacity: .46, depthWrite: false });
+    const baseMaterial = material('base', { color: 0x6d87af, metalness: .47, roughness: .24, clearcoat: .35 });
+    const dramMaterial = material('dram', { color: gen4 ? 0x92bedf : 0xb6a2d8, metalness: .12, roughness: .27, clearcoat: .35, transparent: true, opacity: .56, depthWrite: false, side: THREE.FrontSide });
+    const dramCapMaterial = material('dram', { color: gen4 ? 0xb9d9f2 : 0xddcff0, metalness: .25, roughness: .30, transparent: true, opacity: .46, depthWrite: false });
     const capGeometry = ownGeometry(new THREE.PlaneGeometry(dimensions.stackW - .10, dimensions.stackD - .10));
     const tsvGeometry = ownGeometry(new THREE.CylinderGeometry(.028, .028, 1, 8));
     const tsvMaterial = material('tsv', { color: 0xb86d2e, metalness: .42, roughness: .33, emissive: 0x632604, emissiveIntensity: .16, transparent: false, opacity: 1 });
@@ -240,7 +240,7 @@ export function createPackageScene(host, onSelect = () => {}) {
     stackCarrier = makeBox(roundedBox(3.38, .15, 2.9, .025), interposerMaterial, 'interposer');
     stackCarrier.position.set(stacks[0].x, 1.51, stacks[0].z);
     const flowGeometry = ownGeometry(new THREE.SphereGeometry(.046, 8, 6));
-    const flowMaterial = ownMaterial(new THREE.MeshBasicMaterial({ color: 0x58d5b1 }));
+    const flowMaterial = ownMaterial(new THREE.MeshBasicMaterial({ color: 0x68cbbd }));
     horizontalFlow = new THREE.InstancedMesh(flowGeometry, flowMaterial, 64); horizontalFlow.instanceMatrix.setUsage(THREE.DynamicDrawUsage); horizontalFlow.frustumCulled = false; model.add(horizontalFlow);
     verticalFlow = new THREE.InstancedMesh(flowGeometry, ownMaterial(new THREE.MeshBasicMaterial({ color: 0xf0b46f })), 24); verticalFlow.instanceMatrix.setUsage(THREE.DynamicDrawUsage); verticalFlow.frustumCulled = false; model.add(verticalFlow);
     for (let stackIndex = 0; stackIndex < 4; stackIndex++) {

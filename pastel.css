@@ -1,0 +1,85 @@
+/* A quiet pastel palette; saturated colors are reserved for readable controls. */
+:root{
+ --bg:#fbfaff;--paper:#ffffff;--ink:#30344f;--muted:#62687d;
+ --line:#e2e2ef;--green:#386e80;--lime:#d8e6fa;--soft:#f0eef9;--orange:#a9573c;
+ --lavender:#eee5fc;--mint:#ddf3ed;--peach:#ffe9de;--sky:#dfedff;
+ --card-shadow:0 10px 32px #6871970c;
+}
+body{background:radial-gradient(ellipse at 95% 0,#efe4ff88,transparent 35rem),radial-gradient(ellipse at 16% 28rem,#dff4f088,transparent 35rem),var(--bg)}
+header{background:linear-gradient(105deg,#ffffffed,#f5efffeb 56%,#eaf8f3eb);backdrop-filter:blur(14px)}
+aside{background:linear-gradient(175deg,#faf8fff2,#eef7faf0 65%,#f6f4fff2)}
+.mark,.primary{background:linear-gradient(120deg,#477c92,#7560ad);color:#fff;box-shadow:0 6px 20px #655ca328}
+.mark{border-radius:12px}.primary{border-radius:12px;transition:box-shadow .2s,transform .2s}
+.primary:hover{box-shadow:0 9px 25px #655ca33d;transform:translateY(-2px)}
+header button{box-shadow:0 3px 12px #6567860c}
+nav a{border-radius:10px;transition:background .18s}
+nav a.active,nav a.active:hover{background:linear-gradient(110deg,#e5dcfa,#d9edf5);color:#35405b;box-shadow:inset 0 0 0 1px #cdd2e5}
+nav a:hover{background:#eaeafa}
+h1 em{background:linear-gradient(110deg,#7660b5 8%,#477c92 80%);background-clip:text;-webkit-background-clip:text;color:transparent}
+.hero-model{border-color:#ded8ee;border-radius:20px;background:radial-gradient(ellipse at 15% 5%,#ede1ff,transparent 65%),radial-gradient(ellipse at 100% 100%,#d9f0e9,transparent 70%),linear-gradient(135deg,#f7f5ff,#eaf5fb 65%,#fff0e5);box-shadow:0 15px 45px #817aac13;background-size:auto}
+.model-tag{color:#65667d}.model-footer{color:#59657a}.hero-controls button{background:#ffffffb5;border-color:#d4d5e7;border-radius:9px}
+.hero-controls button:hover{background:#f5efff;border-color:#9889bc}
+.dot{background:#967ac9;box-shadow:0 0 0 4px #e8def7}
+.intro-meta{color:#67687d}.intro-meta i{color:#b5abc8}
+.learning-map{background:linear-gradient(115deg,#eee5fa,#e3f1fc 58%,#e2f3ec);border:1px solid #e0dfed;border-radius:16px;box-shadow:var(--card-shadow)}
+.learning-map a{background:#ffffffb8;border-radius:8px;border-color:#d7dce9}
+.learning-map a:hover{background:#fff;border-color:#a79ac9}
+.ribbon{border-color:var(--line);color:var(--muted)}.ribbon b{color:#9f91bd}
+#chapters>.chapter{--chapter-tint:var(--lavender)}
+#chapters>.chapter:nth-child(4n + 2){--chapter-tint:var(--sky)}
+#chapters>.chapter:nth-child(4n + 3){--chapter-tint:var(--mint)}
+#chapters>.chapter:nth-child(4n){--chapter-tint:var(--peach)}
+.chapter>.eyebrow{display:inline-block;padding:6px 12px;border:1px solid var(--line);border-radius:30px;background:var(--chapter-tint,var(--lavender));color:#4e5473;font-size:11px;letter-spacing:1.2px}
+.concept{border-radius:14px;border:1px solid var(--line);background:linear-gradient(135deg,var(--lavender),var(--paper))}
+.concept:nth-child(3n + 2){background:linear-gradient(135deg,var(--mint),var(--paper))}
+.concept:nth-child(3n){background:linear-gradient(135deg,var(--peach),var(--paper))}
+.concept b{color:var(--ink)}
+.lab,.pkg-explorer{border-color:var(--line);border-radius:18px;box-shadow:var(--card-shadow);background:linear-gradient(155deg,var(--paper),var(--bg))}
+.lab-head small{background:var(--soft);padding:3px 9px;border-radius:20px;color:var(--green);font-weight:600}
+.readout{background:linear-gradient(120deg,var(--soft),var(--sky));border:1px solid var(--line);border-radius:12px}
+.task{background:linear-gradient(100deg,var(--peach),var(--paper));border-left-color:#cd9377;border-radius:0 10px 10px 0}
+.formula,.worked-example,.layer-readout{border-radius:10px;background:linear-gradient(120deg,var(--soft),var(--paper))}
+.metric-row div{border-radius:12px;background:linear-gradient(140deg,var(--sky),var(--paper))}
+.metric-row div:nth-child(2){background:linear-gradient(140deg,var(--lavender),var(--paper))}
+.metric-row div:nth-child(3){background:linear-gradient(140deg,var(--mint),var(--paper))}
+select,.steps button,.quiz button,.preset,.sim-buttons button{border-radius:8px;background:var(--paper)}
+.steps button.selected,.preset.selected,.complete.done{background:linear-gradient(120deg,#477c92,#7560ad);color:white}
+.complete{border-radius:9px}.quiz{border-radius:14px;background:var(--paper)}
+.quiz button.right{background:var(--mint);color:#245d53;border-color:#6faaa0}
+.quiz button.wrong{background:var(--peach);color:#884633;border-color:#c99079}
+.quiz .feedback{color:var(--green)}
+.terms details{border-color:var(--line)}.source-list a{background:linear-gradient(120deg,var(--soft),var(--paper));border:1px solid var(--line);border-radius:10px}
+.source-list a:nth-child(even){background:linear-gradient(120deg,var(--sky),var(--paper))}
+.viz{background:linear-gradient(145deg,#eef1ff,#edf8f3 60%,#fff4ed);border:1px solid #e1e5f2;border-radius:13px}
+.diagram{background:linear-gradient(125deg,var(--lavender),var(--sky));border-radius:12px}
+.pkg-heading{background:linear-gradient(110deg,var(--lavender),var(--sky) 60%,var(--mint));border-color:var(--line)}
+.pkg-heading h3{color:var(--ink)}.pkg-badge{background:#ffffff85;border-color:#a1a0c9;color:#555d87}
+.pkg-panel{background:linear-gradient(180deg,var(--paper),var(--bg));border-color:var(--line)}
+.pkg-stage{background:radial-gradient(ellipse at 12% 12%,#eee0fc,transparent 65%),radial-gradient(ellipse at 85% 75%,#dff4ef,transparent 65%),linear-gradient(130deg,#faf7ff,#e8f2ff 70%,#fff0e6)}
+.pkg-hero-stage{background:transparent}
+#hero-stack[data-hero-mode=loading],#hero-stack[data-hero-mode=unavailable]{background:transparent}
+.pkg-detail{background:linear-gradient(130deg,var(--soft),var(--sky));border:1px solid var(--line);border-radius:12px}
+.pkg-segments{background:var(--soft);border-color:var(--line)}
+.pkg-segments button[aria-pressed=true]{background:var(--paper);color:var(--green);box-shadow:0 2px 7px #6474a01a}
+.pkg-metrics>div:nth-child(1){background:linear-gradient(145deg,var(--sky),var(--paper))}
+.pkg-metrics>div:nth-child(2){background:linear-gradient(145deg,var(--lavender),var(--paper))}
+.pkg-metrics>div:nth-child(3){background:linear-gradient(145deg,var(--mint),var(--paper))}
+.pkg-metrics>div:nth-child(4){background:linear-gradient(145deg,var(--peach),var(--paper))}
+.pkg-metrics strong{color:var(--ink)}
+body.dark{--bg:#202536;--paper:#292e44;--ink:#eef0fc;--muted:#bac2d8;--line:#444960;--green:#9ddbdc;--lime:#d8d4fc;--soft:#34364f;--orange:#efaf93;--lavender:#3c3557;--mint:#2c4546;--peach:#493b42;--sky:#303f59;--card-shadow:0 10px 32px #11162620;background:radial-gradient(ellipse at 90% 0,#51456b55,transparent 35rem),var(--bg)}
+body.dark header{background:linear-gradient(110deg,#292e44f5,#353047f5,#293e45f5)}
+body.dark aside{background:linear-gradient(175deg,#292a3f,#25313d)}
+body.dark nav a:hover{background:#343b53}body.dark nav a.active:hover{background:linear-gradient(110deg,#e5dcfa,#d9edf5)}
+body.dark h1 em{background-image:linear-gradient(110deg,#cbb8fa,#a5dbe4)}
+body.dark .hero-model{border-color:var(--line);background:radial-gradient(ellipse at 10% 5%,#55477388,transparent 65%),radial-gradient(ellipse at 95% 90%,#355c6188,transparent 70%),#2b334b}
+body.dark .hero-controls button{background:#32384dcc;color:var(--ink);border-color:var(--line)}
+body.dark .hero-controls button:hover{background:#464263}
+body.dark .model-tag,body.dark .model-footer{color:#c4cbe0}
+body.dark .learning-map{background:linear-gradient(115deg,var(--lavender),var(--sky),var(--mint));border-color:var(--line)}
+body.dark .learning-map a{background:var(--paper);border-color:var(--line)}
+body.dark .intro-meta{color:var(--muted)}body.dark .chapter>.eyebrow{color:#d2d9ed}
+body.dark .quiz button.right{color:#bfe9df}body.dark .quiz button.wrong{color:#efaf93}
+body.dark .pkg-stage{background:radial-gradient(ellipse at 12% 12%,#514569,transparent 65%),linear-gradient(130deg,#303249,#2c4653)}
+body.dark .pkg-hero-stage{background:transparent}body.dark .pkg-badge{background:#292e4485;color:#c5c2ed}
+@media(prefers-reduced-motion:reduce){.primary,nav a{transition:none}.primary:hover{transform:none}}
+@media print{body,body.dark{background:#fff;color:#222}.hero-model,.viz{box-shadow:none}}
