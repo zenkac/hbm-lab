@@ -26,27 +26,23 @@ const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersec
 // Shared visual tokens keep the teaching diagrams consistent as controls redraw them.
 // Opacity, geometry and status markers still come from each experiment's model.
 const diagramTones = [
- ['lavender','#e4ddfc','#bcb5e9','#8171b2',['#08645b','#087265','#ccf292']],
- ['mint','#d4f2e8','#99cdbf','#548e80',['#58a38d','#89b753','#85b6a4','#a4d2b5','#a7c8b6']],
- ['sky','#e3eefc','#c0d6ec','#7896b5',['#c4d4be','#c0d4bd','#b6cbbb','#d9e8da','#c6d9cb']],
- ['peach','#ffe4d6','#efbba8','#b97763',['#ba562c','#c26335','#c25935','#c45c32','#d8b081']],
- ['gold','#fff0cb','#efd4a7','#b39769',['#d7a95b','#dab75c','#e8ffb9']],
- ['blue','#c3ddeb','#98bbd0','#64889f',['#477968','#315749','#3b7264','#497c68','#9abaaa','#83b5a0']]
+ ['lavender','#cdc6ee','#8171b2',['#08645b','#087265','#ccf292']],
+ ['mint','#b3ded1','#548e80',['#58a38d','#89b753','#85b6a4','#a4d2b5','#a7c8b6']],
+ ['sky','#d3e3f5','#7896b5',['#c4d4be','#c0d4bd','#b6cbbb','#d9e8da','#c6d9cb']],
+ ['peach','#f6cfbc','#b97763',['#ba562c','#c26335','#c25935','#c45c32','#d8b081']],
+ ['gold','#f6e2b8','#b39769',['#d7a95b','#dab75c','#e8ffb9']],
+ ['blue','#adccdf','#64889f',['#477968','#315749','#3b7264','#497c68','#9abaaa','#83b5a0']]
 ];
-const diagramToneByColor = new Map(diagramTones.flatMap(tone=>tone[4].map(color=>[color,tone])));
+const diagramToneByColor = new Map(diagramTones.flatMap(tone=>tone[3].map(color=>[color,tone])));
 const diagramLines = new Map(['#487b69','#799e8c','#5f8b78','#8aaba0','#94b5a5','#9cbba6','#adc4b7'].map(color=>[color,'#9cacc5']));
-let diagramSerial=0;
 const svg=(body,view='0 0 520 320')=>{
- const prefix='hbm-diagram-'+(++diagramSerial),used=new Map();
- const drawing=body.replace(/\b(fill|stroke|stop-color)="(#[0-9a-f]{6})"/gi,(attribute,kind,color)=>{
+ const drawing=body.replace(/\b(fill|stroke)="(#[0-9a-f]{6})"/gi,(attribute,kind,color)=>{
   const tone=diagramToneByColor.get(color.toLowerCase());
-  if(kind==='stroke')return `stroke="${tone?tone[3]:diagramLines.get(color.toLowerCase())||color}"`;
+  if(kind==='stroke')return `stroke="${tone?tone[2]:diagramLines.get(color.toLowerCase())||color}"`;
   if(!tone)return attribute;
-  if(kind==='stop-color')return `stop-color="${tone[2]}"`;
-  used.set(tone[0],tone);return `fill="url(#${prefix}-${tone[0]})"`;
+  return `fill="${tone[1]}"`;
  });
- const defs=[...used.values()].map(([name,light,deep])=>`<linearGradient id="${prefix}-${name}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${light}"/><stop offset="1" stop-color="${deep}"/></linearGradient>`).join('');
- return `<svg xmlns="http://www.w3.org/2000/svg" role="${body.includes('role="button"')?'group':'img'}" aria-label="실험 결과 개념도" viewBox="${view}"><defs>${defs}</defs>${drawing}</svg>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" role="${body.includes('role="button"')?'group':'img'}" aria-label="실험 결과 개념도" viewBox="${view}">${drawing}</svg>`;
 };
 function stack(n=8,gap=17,angle=0){let s='<ellipse cx="260" cy="280" rx="176" ry="21" fill="#c6d9cb" opacity=".4"/>';s+=`<g transform="translate(260 170) rotate(${angle}) translate(-260 -170)"><path d="M90 243 250 199 432 244 268 291Z" fill="#477968"/><path d="M90 243v13l178 48 164-47v-13l-164 47Z" fill="#315749"/><path d="M109 235 251 196 414 237 270 277Z" fill="#b6cbbb"/>`;for(let i=0;i<n;i++){let y=235-i*gap;s+=`<path class="layer-select" data-layer="${i+1}" role="button" tabindex="0" aria-label="DRAM 다이 ${i+1} 선택" d="M170 ${y} 255 ${y-24} 347 ${y} 262 ${y+24}Z" fill="${i===n-1?'#ccf292':'#85b6a4'}" stroke="#487b69"/><path d="M170 ${y}v7l92 24 85-24v-7l-85 24Z" fill="#3b7264"/>`;for(let j=0;j<5;j++)s+=`<circle class="packet" cx="${204+j*22}" cy="${y+1}" r="2.2" fill="#e8ffb9" style="animation-delay:${j*.2}s"/>`}s+='</g><text x="352" y="80" fill="#386959" font-size="13">DRAM 다이</text><text x="351" y="103" fill="#386959" font-size="12">수직 연결 · TSV</text><text x="47" y="282" fill="#386959" font-size="12">패키지 기판</text>';return svg(s,`0 ${Math.min(0,190-(n-1)*gap)} 520 ${320-Math.min(0,190-(n-1)*gap)}`)}
 const cards=items=>`<div class="concepts">${items.map(([a,b])=>`<div class="concept"><b>${a}</b><p>${b}</p></div>`).join('')}</div>`;
@@ -73,7 +69,7 @@ function packageDiagram(){return svg('<path d="M55 230 255 170 470 225 266 290Z"
 function showStep(i){document.querySelectorAll('[data-step]').forEach(b=>{b.classList.toggle('selected',+b.dataset.step===i);b.setAttribute('aria-pressed',String(+b.dataset.step===i))});$('step-info').innerHTML=`<h3>${processSteps[i][0]}</h3><p>${processSteps[i][1]}</p><div class="task"><b>업무 질문</b> 이 단계에서 생긴 결함을 다음 단계에서 검출할 수 있을까요?</div>`;$('viz-07').innerHTML=i<3?svg(`<rect x="70" y="100" width="350" height="${i===1?45:100}" rx="4" fill="#9abaaa"/><text x="70" y="80">실리콘 웨이퍼 단면</text>`+Array.from({length:8},(_,j)=>`<rect x="${92+j*40}" y="95" width="10" height="${i===1?55:110}" fill="${i===2&&j===3?'#ba562c':'#d7a95b'}"/>`).join('')+`<text x="70" y="245" class="label">${i===2?'피치색: 선별에서 발견한 불량 예시':'금색: 수직 연결부 · 구조 개념도'}</text>`):i===4?packageDiagram():stack(i===3?4:8,15,0)}document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>showStep(+b.dataset.step));showStep(0);
 wire(['alignment'],()=>{let d=v('alignment')/100*2,area=(2*Math.acos(d/2)-.5*d*Math.sqrt(4-d*d))/Math.PI*100;read('align-read',num(area)+'%','두 연결 패드의 기하학적 겹침 면적 · 전기적 합격 판정 아님');$('viz-08').innerHTML=svg(`<circle cx="210" cy="145" r="70" fill="#08645b" opacity=".7"/><circle cx="${210+d*70}" cy="145" r="70" fill="#d7a95b" opacity=".65"/><text x="140" y="250">아래 패드</text><text x="300" y="250">위 패드</text><path d="M210 145h${d*70}" stroke="#183c39" stroke-dasharray="4"/>`)});
 $('body-thermal').innerHTML=lab('09','열저항과 온도 상승',range('ambient','냉각 기준 온도',20,65,35,1,' °C')+range('power','스택 소비전력',2,30,12,1,' W')+range('resistance','유효 열저항',.5,5,2,.1,' °C/W')+result('heat-read'),'T = 기준 온도 + 전력 × 유효 열저항. 냉각 기준은 단순한 주변/냉각 경계입니다. 특정 제품의 junction 온도 또는 허용 온도를 보증하지 않습니다.','전력을 2배로 늘린 경우와 열저항을 절반으로 줄인 경우를 비교해 보세요.')+lab('10','데이터 전송의 에너지',range('traffic','실제 전송량',100,2000,1000,50,' GB/s')+range('energy','전송 bit당 에너지',.5,8,2,.1,' pJ/bit')+result('energy-read'),'I/O 데이터 전송 에너지의 이상화 계산입니다. DRAM 코어, 리프레시, 대기 및 컨트롤러 전력은 제외하며 전체 HBM 소비전력과 같지 않습니다.','동일한 전송량에서 pJ/bit를 줄이면 무엇이 바뀌나요? 대역폭 이용률이 낮으면 전체 전력도 같은 비율로 줄까요?');
-wire(['ambient','power','resistance'],()=>{let t=v('ambient')+v('power')*v('resistance');read('heat-read',num(t)+' °C',`기준 ${v('ambient')} °C + 상승 ${num(v('power')*v('resistance'))} °C`);$('viz-09').innerHTML=svg(`<defs><linearGradient id="heat" x2="0" y2="1"><stop stop-color="#c25935"/><stop offset="1" stop-color="#ccf292"/></linearGradient></defs><rect x="155" y="55" width="205" height="150" rx="6" fill="url(#heat)"/>`+Array.from({length:7},(_,i)=>`<path d="M155 ${75+i*18}h205" stroke="#f7f8f4"/>`).join('')+`<path d="M175 40v-25m80 25v-25m80 25v-25" stroke="#ba562c" stroke-width="3"/><rect x="120" y="220" width="275" height="25" rx="5" fill="#83b5a0"/><text x="145" y="283">냉각 경로 · 열저항 ${v('resistance')} °C/W</text>`)});
+wire(['ambient','power','resistance'],()=>{let t=v('ambient')+v('power')*v('resistance');read('heat-read',num(t)+' °C',`기준 ${v('ambient')} °C + 상승 ${num(v('power')*v('resistance'))} °C`);$('viz-09').innerHTML=svg(`<rect x="155" y="55" width="205" height="150" rx="6" fill="#ba562c"/>`+Array.from({length:7},(_,i)=>`<path d="M155 ${75+i*18}h205" stroke="#f7f8f4"/>`).join('')+`<path d="M175 40v-25m80 25v-25m80 25v-25" stroke="#ba562c" stroke-width="3"/><rect x="120" y="220" width="275" height="25" rx="5" fill="#83b5a0"/><text x="145" y="283">냉각 경로 · 열저항 ${v('resistance')} °C/W</text>`)});
 wire(['traffic','energy'],()=>{let p=v('traffic')*8*v('energy')/1000;read('energy-read',num(p,2)+' W','전송량 × 8 bit/byte × pJ/bit · I/O만의 예시');$('viz-10').innerHTML=bars([['현재 I/O 전력 · W',p],['에너지 절반일 때 · W',p/2,'#89b753']])});
 $('body-quality').innerHTML=cards([['수율 · Yield','제조 투입 대비 합격 비율. 웨이퍼 수율, 스택 수율, 최종 패키지 수율은 분모가 다릅니다.'],['ECC와 리던던시','ECC는 특정 오류 패턴을 정정하며, 리던던시는 결함 자원을 여분으로 대체합니다. 모든 물리 결함을 고칠 수는 없습니다.'],['신뢰성 · Reliability','출하 시 합격과 사용 중 안정성은 다릅니다. 온도, 전압, 시간과 사용 패턴에 대한 시험 조건을 함께 확인합니다.']])+lab('11','적층 수율: 작은 손실의 누적',select('yieldlayers','DRAM 적층 수',[[4,'4-Hi'],[8,'8-Hi'],[12,'12-Hi'],[16,'16-Hi · 가상 비교']])+range('dieyield','선별 후 다이 합격 확률',90,100,99.5,.1,'%')+range('bondyield','접합 인터페이스 합격 확률',95,100,99,.1,'%')+range('packageyield','기타 패키징 합격 확률',90,100,98,.1,'%')+result('yield-read'),'독립 결함, 동일 확률, 재작업 없음 가정. 접합은 베이스 다이 포함 n개 인터페이스로 계산하며 베이스 다이 자체 수율은 기타 항에 포함합니다. 실제 KGD·리페어·상관 결함은 별도 분석이 필요합니다.','합격 확률 99%는 충분히 높아 보입니다. 적층 수를 늘리면 최종 수율은 어떻게 바뀌나요?')+'<div class="formula">스택 수율 = (선별 후 다이 합격 확률)^n × (접합 합격 확률)^n × 기타 패키징 합격 확률</div><div class="task"><b>불량 분석의 시작</b> 증상 재현 → 전압·온도·속도 조건 기록 → 위치/뱅크/비트 패턴 분류 → 물리·전기 분석 → 원인 가설 검증. 오류 개수만 보고 TSV 불량이라고 단정하지 않습니다.</div>';
 wire(['yieldlayers','dieyield','bondyield','packageyield'],()=>{let n=v('yieldlayers'),d=(v('dieyield')/100)**n,b=(v('bondyield')/100)**n,p=v('packageyield')/100,y=d*b*p;read('yield-read',num(y*100,2)+'%',`1000개 투입 시 기대 합격 ${num(1000*y,0)}개 · 기대값이며 실제 정수 결과와 다름`);$('viz-11').innerHTML=bars([['다이 단계 누적 · %',d*100],['접합까지 누적 · %',d*b*100],['최종 · %',y*100,'#89b753']],100)});$('yieldlayers').value='8';$('yieldlayers').dispatchEvent(new Event('input'));
